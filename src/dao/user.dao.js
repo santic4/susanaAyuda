@@ -1,7 +1,7 @@
 import { UserModel } from '../models/User.model.js';
 
 
-export class UserDao {
+ class UserDao {
     async createUser(userData) {
         try {
             return await UserModel.create(userData);
@@ -84,3 +84,5 @@ export class UserDao {
         }
     }
 }
+
+export const userDAO = new UserDao()

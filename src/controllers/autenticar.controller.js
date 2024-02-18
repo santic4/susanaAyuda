@@ -1,11 +1,11 @@
 import { encriptar } from '../utils/cripto.js'
-import { UserService } from '../service/user.service.js';
+import { usersServices } from '../service/user.service.js';
 
 const COOKIE_OPTS = { signed: true, maxAge: 1000 * 60 * 60, httpOnly: true }
 
-export async function registerUser(req, _email, _password, done) {
+export async function registerUser(req, _username, _password, done) {
     try {
-      const user = await UserService.createUser(req.body);
+      const user = await usersServices.createUser(req.body);
       done(null, user);
       console.log(user)
     } catch (error) {

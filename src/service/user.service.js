@@ -1,11 +1,12 @@
-import { UserRepository } from '../repository/user.repository.js';
+import { userRepository } from '../repository/user.repository.js';
+import { hashear } from '../utils/cripto.js';
 
-export class UserService {
-    async  createUser(userData) {
+class UserService {
+    async createUser(userData) {
         try {
-            userData.id= randomUUID()
+      
             userData.password = hashear(userData.password)
-            const createUser = await UserRepository.createUser(userData);
+            const createUser = await userRepository.createUser(userData);
             return createUser;
         } catch (error) {
             throw new Error('Error al crear usuario');
@@ -16,7 +17,7 @@ export class UserService {
         const user = req.session.user_id;
     
         try {
-            const userFound = await UserRepository.findOneUser(user._id ).lean();
+            const userFound = await userRepository.findOneUser(user._id ).lean();
             return res.successfullGet(userFound);
         } catch (error) {
             return res.failedGet();
@@ -25,7 +26,7 @@ export class UserService {
     
     async findUserByEmail  ({email, password}){
         try {
-            const user = await UserRepository.findUserByEmail({ email })
+            const user = await userRepository.findUserByEmail({ email })
             if (!user) { throw new Error('authentication error') }
             if (!hasheadasSonIguales({
               recibida: password,
@@ -44,7 +45,7 @@ export class UserService {
         const query = req.session.query;
     
         try {
-            const usersFound = await UserRepository.findManyUser(query ).lean();
+            const usersFound = await userRepository.findManyUser(query ).lean();
             return res.successfullGet(usersFound);
         } catch (error) {
             return res.failedGet();
@@ -56,7 +57,7 @@ export class UserService {
         try {
             const newPassword = hashear(password);
 
-            const actualizado = await UserRepository.findOneAndUpdate(
+            const actualizado = await userRepository.findOneAndUpdate(
                 { email },
                 { $set: { password: newPassword } },
                 { new: true }
@@ -74,7 +75,7 @@ export class UserService {
 
     async usersByRoles(roles) {
         try {
-            const usersByRole = await UserRepository.usersByRoles(roles);
+            const usersByRole = await userRepository.usersByRoles(roles);
             return usersByRole.map(user => user.toPOJO());
         } catch (error) {
             throw error;
@@ -83,7 +84,7 @@ export class UserService {
 
     async updateUserByEmail(email, newData) {
         try {
-            const updatedUser = await UserRepository.updateUserByEmail(email, { $set: { newData } });
+            const updatedUser = await userRepository.updateUserByEmail(email, { $set: { newData } });
             if (!updatedUser) {
             throw new Error('Usuario no encontrado')}
             return updatedUser;
@@ -94,7 +95,7 @@ export class UserService {
 
     async userCurrent (userId) {
         try {
-            const user = await UserRepository.findOneUser(userId);
+            const user = await userRepository.findOneUser(userId);
             return {
                 id: user.id,
                 username: user.username,
@@ -106,10 +107,12 @@ export class UserService {
 
     async deleteUserById (userId) {
         try {
-          const deletedUser = await UserRepository.deleteUserById(userId);
+          const deletedUser = await userRepository.deleteUserById(userId);
           return deletedUser ? deletedUser.toObject() : null;
         } catch (error) {
           throw new Error('Error al eliminar usuario en el servicio');
         }
       }
 }
+
+export const usersServices = new UserService()

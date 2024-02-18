@@ -1,10 +1,10 @@
-import { UserDao } from '../dao/user.dao.js';
+import { userDAO } from '../dao/user.dao.js';
 import { UserDto } from '../dto/user.dto.js';
 
-export class UserRepository {
+class UserRepository {
     async createUser(userData) {
         try {
-            const user = await UserDao.createUser(userData);
+            const user = await userDAO.createUser(userData);
             return new UserDto(user); 
         } catch (error) {
             throw error;
